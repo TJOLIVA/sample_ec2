@@ -1,0 +1,35 @@
+services:
+  dind:
+    image: docker:dind
+    privileged: true
+    volumes:
+      - dind-storage:/var/lib/docker
+      - ${PWD}:/workspace
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+      DEVCONTAINER: "true"
+    ports:
+      - "2375:2375"
+    command: ["dockerd-entrypoint.sh", "--host=tcp://0.0.0.0:2375", "--host=unix:///var/run/docker.sock"]
+    healthcheck:
+      test: ["CMD", "docker", "info"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  k6:
+    image: grafana/k6
+    depends_on:
+      dind:
+        condition: service_healthy
+    environment:
+      DOCKER_HOST: "tcp://dind:2375"
+      DOCKER_TLS_VERIFY: "0"
+    command: ["run", "/k6-tests/test.js"]
+    volumes:
+      - /Users/tjoliva/Documents/sample_ec2/k6-tests:/k6-tests:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  dind-storage:
+  workspace:

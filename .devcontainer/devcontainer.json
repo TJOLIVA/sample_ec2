@@ -1,0 +1,19 @@
+{
+  "name": "Reusable Dev Container",
+  "dockerComposeFile": ["docker-compose.yml"],
+  "service": "k6",
+  "workspaceFolder": "/k6_project",
+  "remoteEnv": {
+    "DOCKER_HOST": "tcp://dind:2375",
+    "DOCKER_TLS_VERIFY": "0"
+  },
+  "containerEnv": {
+    "ALPINE_MIRROR": "https://dl-cdn.alpinelinux.org/alpine"
+  },
+  "shutdownAction": "stopCompose",
+  "initializeCommand": "docker --host=tcp://dind:2375 info || echo 'Docker is not installed or the daemon is not running'",
+  "overrideCommand": false,
+  "forwardPorts": [2375],
+  "settings": {},
+  "extensions": []
+}
