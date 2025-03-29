@@ -1,0 +1,33 @@
+services:
+  dind:
+    image: docker:dind
+    privileged: true
+    volumes:
+      - dind-storage:/var/lib/docker
+      - ${PWD}:/workspace # Ensure this matches the workspaceFolder in devcontainer.json
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+      DEVCONTAINER: "true" # Indicate devcontainer environment
+    ports:
+      - "2375:2375" # Fix port mapping to match DOCKER_HOST
+    command: ["dockerd-entrypoint.sh", "--host=tcp://0.0.0.0:2375", "--host=unix:///var/run/docker.sock"]
+    deploy:
+      replicas: ${USE_DIND:-0}
+    mem_limit: 512m # Set memory limit to 512MB
+
+  k6:
+    image: grafana/k6
+    volumes:
+      - ${PWD}:/workspace # Ensure this matches the workspaceFolder in devcontainer.json
+      - ${PWD}/k6-tests:/k6-tests
+    depends_on:
+      - dind
+    environment:
+      DEVCONTAINER: "true" # Indicate devcontainer environment
+    entrypoint: ["k6", "run", "/k6-tests/test.js"]
+    mem_limit: "536870912" # Increase memory limit to 512MB
+
+volumes:
+  dind-storage:
+  workspace:
+
