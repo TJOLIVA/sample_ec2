@@ -9,7 +9,7 @@ services:
       DOCKER_TLS_CERTDIR: ""
       DEVCONTAINER: "true"
     ports:
-      - "2375:2375"
+      - "2376:2375" # Changed host port to 2376
     command: ["dockerd-entrypoint.sh", "--host=tcp://0.0.0.0:2375", "--host=unix:///var/run/docker.sock"]
     healthcheck:
       test: ["CMD", "docker", "info"]
@@ -27,7 +27,7 @@ services:
       DOCKER_TLS_VERIFY: "0"
     command: ["run", "/k6-tests/test.js"]
     volumes:
-      - /Users/tjoliva/Documents/sample_ec2/k6-tests:/k6-tests:ro
+      - ${PWD}/k6-tests:/k6-tests:ro # Mount k6-tests directly under /k6-tests
       - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:

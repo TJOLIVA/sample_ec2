@@ -2,7 +2,7 @@
   "name": "Reusable Dev Container",
   "dockerComposeFile": ["docker-compose.yml"],
   "service": "k6",
-  "workspaceFolder": "/k6_project",
+  "workspaceFolder": "/", // Updated to reflect the root directory
   "remoteEnv": {
     "DOCKER_HOST": "tcp://dind:2375",
     "DOCKER_TLS_VERIFY": "0"
